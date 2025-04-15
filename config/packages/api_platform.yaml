@@ -1,0 +1,8 @@
+api_platform:
+    title: Notes API
+    version: 1.0.0
+    description: 'API pro správu poznámek s různými prioritami'
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']

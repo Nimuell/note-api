@@ -1,0 +1,198 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Notes API",
+    "description": "API pro správu poznámek s různými prioritami",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/notes": {
+      "get": {
+        "summary": "Získá všechny poznámky",
+        "tags": ["Notes"],
+        "parameters": [
+          {
+            "name": "priority",
+            "in": "query",
+            "description": "Filtruje poznámky podle priority",
+            "schema": {
+              "type": "string",
+              "enum": ["low", "medium", "high"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Úspěšně vrácené poznámky",
+            "content": {
+              "application/ld+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "@context": { "type": "string" },
+                    "@id": { "type": "string" },
+                    "@type": { "type": "string" },
+                    "totalItems": { "type": "integer" },
+                    "member": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Notes" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Vytvoří novou poznámku",
+        "tags": ["Notes"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/ld+json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "text", "priority"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "text": { "type": "string" },
+                  "priority": { 
+                    "type": "string",
+                    "enum": ["low", "medium", "high"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Poznámka byla vytvořena",
+            "content": {
+              "application/ld+json": {
+                "schema": { "$ref": "#/components/schemas/Notes" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notes/{id}": {
+      "get": {
+        "summary": "Získá konkrétní poznámku podle ID",
+        "tags": ["Notes"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Úspěšně vrácená poznámka",
+            "content": {
+              "application/ld+json": {
+                "schema": { "$ref": "#/components/schemas/Notes" }
+              }
+            }
+          },
+          "404": {
+            "description": "Poznámka nebyla nalezena"
+          }
+        }
+      },
+      "put": {
+        "summary": "Aktualizuje celou poznámku",
+        "tags": ["Notes"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/ld+json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "text", "priority"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "text": { "type": "string" },
+                  "priority": { 
+                    "type": "string",
+                    "enum": ["low", "medium", "high"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Poznámka byla aktualizována",
+            "content": {
+              "application/ld+json": {
+                "schema": { "$ref": "#/components/schemas/Notes" }
+              }
+            }
+          },
+          "404": {
+            "description": "Poznámka nebyla nalezena"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Odstraní poznámku",
+        "tags": ["Notes"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Poznámka byla odstraněna"
+          },
+          "404": {
+            "description": "Poznámka nebyla nalezena"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Notes": {
+        "type": "object",
+        "properties": {
+          "@context": { "type": "string" },
+          "@id": { "type": "string" },
+          "@type": { "type": "string" },
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "text": { "type": "string" },
+          "priority": { 
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Notes",
+      "description": "Operace s poznámkami"
+    }
+  ]
+}
